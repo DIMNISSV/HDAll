@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <form method="get" name="search">
+        {{ form.as_p }}
+        <button>Найти</button>
+        {% csrf_token %}
+    </form>
+    <div class="pre-posts">
+    {% if object_list %}
+        {% for post in object_list %}
+            {% include 'post/pre-post.html' %}
+        {% endfor %}
+    {% else %}
+        <h3>Ничего не найдено...</h3>
+    {% endif %}
+    </div>
+{% endblock %}

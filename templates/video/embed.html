@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Видео {{ object }}</title>
+    <link rel="stylesheet" href="{% static 'style/video.css' %}">
+    <script src="//vid.justdub.ru/player/player.js" type="text/javascript"></script>
+</head>
+<body>
+{% if object.local_file %}
+
+    <div id="jw-player"></div>
+    <span class="on-top">{{ object }}
+        {% if request.user.is_staff %}
+            <a href="{% url 'update_video' object.pk %}">Изменить текущее видео</a>
+        {% endif %}
+    </span>
+{% else %}
+    Видео не найдено...
+{% endif %}
+
+<script>
+    let jwPlayer = new Playerjs({id: "jw-player", file: "{{ object.local_file.url }}"});
+</script>
+</body>
+</html>

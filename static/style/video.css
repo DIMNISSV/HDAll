@@ -1,0 +1,19 @@
+body {
+    background: #000000;
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+    height: 500px;
+    width: 100%;
+    }
+
+.on-top {
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+#jw-player {
+    height: 100%;
+    width: 100%;
+}

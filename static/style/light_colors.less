@@ -1,0 +1,30 @@
+@tertiary: #f8f8ff;
+@primary: #212121;
+@secondary: #eeeeee;
+@hover_color: rgba(33, 33, 33, 0.3);
+
+body {
+  background: #f8f8ff;
+  color: #212121;
+}
+
+.topmenu, .dropdown-content {
+  background: #eeeeee;
+}
+
+a:hover {
+  color: #212121;
+}
+
+.pre-post:hover {
+  background: @hover_color;
+  box-shadow: 0 0 10px @hover_color;
+}
+
+.episode-btn {
+  background: @secondary;
+}
+
+.active-btn {
+  color: @primary;
+}

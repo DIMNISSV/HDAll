@@ -1,0 +1,8 @@
+{% load static %}
+<div class="pre-post">
+    <a href="{{ post.get_absolute_url }}">
+        <img alt="{{ post.title }}" src="
+                    {% if post.poster %}{{ post.poster.url }}{% else %}{% static 'images/no_poster.webp' %}{% endif %}">
+        {{ post.title }}
+    </a>
+</div>

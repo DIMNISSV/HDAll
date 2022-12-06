@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <h3>Стол заказов</h3>
+    <form method="post">
+        {{ form.as_p }}
+        <button>Добавить</button>
+        {% csrf_token %}
+    </form>
+    <div class="pre-posts">
+    {% if object_list %}
+        {% for order in object_list %}
+            {% include 'order_table/order-item.html' %}
+        {% endfor %}
+    {% else %}
+        <h3>Заказов нет...</h3>
+    {% endif %}
+    </div>
+{% endblock %}

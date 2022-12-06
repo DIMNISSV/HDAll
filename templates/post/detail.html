@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="post">
+        <h2>{{ object.rus_title }} {% if request.user.is_staff %}
+            [<a href="{% url 'post_edit' object.pk %}">Изменить</a>]
+        {% endif %}</h2>
+        <div class="list">
+            {% if kodik_translate_list %}
+                {% for transl in kodik_translate_list %}
+                    <a class="episode-btn {% if transl == translate %}active-btn{% endif %}"
+                       href="{% url 'post_ep' object.slug transl ep_num %}">{{ transl }}</a>
+                {% endfor %}
+            {% else %}
+                <p class="episode-btn">Озвучек не найдено...</p>
+            {% endif %}
+        </div>
+        <div id="player-box">
+            {% if current_video %}
+                <iframe src="{{ current_video.get_embed_url }}" referrerpolicy="strict-origin">
+                    Произошла ошибка...
+                </iframe>
+            {% endif %}
+            {% if kodik_video %}
+                <iframe src="{{ kodik_video }}">
+                    Произошла ошибка...
+                </iframe>
+            {% endif %}
+        </div>
+        <div class="list">
+            {% if kodik_episode_list and translate %}
+                {% for i, video in kodik_episode_list %}
+                    <a class="episode-btn {% if i == ep_num %}active-btn{% endif %}"
+                       href="{% url 'post_ep' object.slug translate i %}">{{ i }} серия</a>
+                {% endfor %}
+            {% else %}
+                <p class="episode-btn">Серий не найдено...</p>
+            {% endif %}
+        </div>
+        <p>
+            {% if object.description %}
+                {{ object.description }}
+            {% else %}
+                Нет описания...
+            {% endif %}
+        </p>
+        <div class="comments">
+            {{ comments_form }}
+            {{ comments }}
+        </div>
+    </div>
+
+{% endblock %}
+{% block other %}
+    <div class="post-info">
+        {% if object.poster %}
+            <img alt="{{ object.title }}" src="{{ object.poster.url }}">
+        {% endif %}
+        {% if object.category.count %}
+            <p><b>Категории:</b>
+                {% for cat in object.category.all %}
+                    <a href="{{ cat.get_absolute_url }}">{{ cat }}</a>
+                {% endfor %}
+            </p>
+        {% endif %}
+        {% if object.genre.count %}
+            <p><b>Жанры:</b>
+                {% for genre in object.genre.all %}
+                    <a href="{{ genre.get_absolute_url }}">{{ genre }}</a>
+                {% endfor %}
+            </p>
+        {% endif %}
+        {% if object.country %}
+            <p><b>Страны:</b>
+                {{ object.country }}
+            </p>
+        {% endif %}
+        {% if object.year %}
+            <p><b>Год:</b>
+                {{ object.year }}
+            </p>
+        {% endif %}
+
+        {% if object.season_total %}
+            <p><b>Всего сезонов:</b>
+                {{ object.season_total }}
+            </p>
+        {% endif %}
+        {% if object.season %}
+            <p><b>Вышло сезонов:</b>
+                {{ object.season_total }}
+            </p>
+        {% endif %}
+        {% if object.episode_total %}
+            <p><b>Всего серий:</b>
+                {{ object.episode_total }}
+            </p>
+        {% endif %}
+        {% if object.persons.count %}
+            <p><b>Персонал:</b></p>
+            <p class="spoiler">
+                {% for person in object.persons.all %}
+                    <a href="{{ person.get_absolute_url }}">{{ person }}</a>
+                {% endfor %}
+            </p>
+        {% endif %}
+        {% if object.dub_workers %}
+            <p><b>Над озвучкой работали:</b>
+                {% for dub_worker in object.dub_workers.all %}
+                    <a href="{{ dub_worker.get_absolute_url }}">{{ dub_worker }}</a>
+                {% endfor %}
+            </p>
+
+        {% endif %}
+        {% if object.episode %}
+            <p><b>Вышло серий:</b>
+                {{ object.episode }}
+            </p>
+        {% endif %}
+
+        {% if object.kinopoisk_id or object.imdb_id or object.shikimory_id or object.wa_id or object.mdl_id %}
+            <p>
+                <a href="https://www.kinopoisk.ru/series/{{ object.kinopoisk_id }}">KinoPoisk</a>,
+                <a href="https://www.imdb.com/title/{{ object.imdb_id }}">IMDB</a>,
+                <a href="{{ object.wa_link }}">World-Art</a>,
+                <a href="https://mydramalist.com/{{ object.mdl_id }}">MyDoramaList</a>,
+                <a href="https://shikimori.one/animes/{{ object.shikimori_id }}">Shikimory</a>
+            </p>
+        {% endif %}
+    </div>
+{% endblock %}

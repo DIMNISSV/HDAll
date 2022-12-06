@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <h2>Все публикации</h2>
+    <div class="pre-posts">
+        {% for post in object_list %}
+            {% include 'post/pre-post.html' %}
+        {% endfor %}
+    </div>
+{% endblock %}

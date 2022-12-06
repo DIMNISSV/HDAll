@@ -1,0 +1,247 @@
+@img_height: 200px * 1.5vh;
+@img_width: 200px * 1vw;
+
+body {
+  margin: 0;
+  min-width: 300px;
+}
+
+a, a:active {
+  text-decoration: none;
+  color: #ffa400;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h3, h4, h6 {
+  margin-bottom: 0.5%;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.center {
+  text-align: center;
+}
+
+.not-visible {
+  display: none;
+}
+
+.spoiler {
+  max-height: 20px;
+  overflow: hidden;
+
+  &:hover {
+    max-height: min-content;
+    overflow: auto;
+  }
+}
+
+.btn {
+  background-color: #ffa400;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-decoration: none;
+  cursor: pointer;
+  .full-width();
+}
+
+form {
+  .helptext, li {
+    font-style: italic;
+  }
+
+  input[type=text], input[type=email], input[type=password], input[type=number], input[type=file], input[type=url], select {
+    .full-width();
+    padding: 10px 15px;
+    margin: 5px 0;
+    box-sizing: border-box;
+  }
+
+  input[type=button], input[type=submit], input[type=reset], button {
+    .btn()
+  }
+
+  textarea {
+    .full-width();
+    height: 150px;
+    padding: 10px 15px;
+    box-sizing: border-box;
+    border: 2px solid;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    resize: vertical;
+  }
+
+  progress {
+    .full-width()
+  }
+}
+
+#percents {
+  float: right;
+}
+
+.main-block {
+  margin: 1%;
+  height: 100%;
+  display: block;
+}
+
+
+.left-block {
+  .full-width();
+}
+
+.right-block {
+  .full-width();
+}
+
+.topmenu {
+  .full-width();
+  display: inline-block;
+  vertical-align: center;
+  text-align: center;
+
+  a, .menu {
+    margin: 15px 1%;
+  }
+
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    padding: 2%;
+  }
+
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+
+}
+
+.subscribe {
+  margin: 0.5%;
+  padding: $margin;
+  width: 200px;
+  display: inline-block;
+  background: rgba(204, 204, 204, 0.2);
+  vertical-align: top;
+
+  h3, h4, h6 {
+    margin: 1% 0;
+    text-align: center;
+  }
+
+  p {
+    margin: 0.5%;
+  }
+
+  ul {
+    padding-left: 10%;
+  }
+
+  .price {
+    font-style: oblique;
+  }
+}
+
+#select-period {
+  width: 98%;
+}
+
+#donate-freekassa {
+  .center();
+  height: max-content;
+}
+
+.pre-post {
+  height: @img_height;
+  width: @img_width;
+  display: inline-block;
+  margin: 1%;
+  text-align: center;
+
+  img {
+    height: @img_height;
+    width: @img_width;
+    position: relative;
+    object-fit: cover;
+  }
+
+  a {
+    max-height: 20px;
+    overflow: hidden;
+  }
+
+  h4 {
+    margin-bottom: 5px;
+  }
+}
+
+.post {
+
+}
+
+.post-info {
+  img {
+    width: 80%;
+    margin: 0 10%;
+  }
+}
+
+#player-box {
+  text-align: center;
+  video, iframe {
+    width: 90%;
+    height: 500px;
+  }
+}
+
+.list {
+  .episode-btn {
+    padding: 0.5%;
+  }
+
+  margin-top: 1%;
+}
+
+@media only screen and (min-width: 800px) {
+  .main-block {
+    display: flex;
+    align-items: normal;
+  }
+
+  .left-block {
+    display: inline-block;
+    width: 69%;
+  }
+
+  .right-block {
+    display: inline-block;
+    width: 29%;
+    margin-left: 1%;
+  }
+
+  .topmenu {
+    .logo {
+      float: left !important;
+    }
+
+    .menu {
+      width: 85%;
+      text-align: right !important;
+      float: right;
+    }
+  }
+}

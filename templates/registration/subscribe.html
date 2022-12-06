@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Покупка подписки {{ user.username }}</h2>
+
+    {% for subscribe in subscribes %}
+        <div class="subscribe">
+            <h4>{{ subscribe.title }}</h4>
+            <h6 class="price">{{ subscribe.price }}₽ {% if subscribe.sale %}<s>{{ subscribe.sale }}</s>{% endif %}</h6>
+            <p>{{ subscribe.descr }}</p>
+            <ul>
+                {% if subscribe.ad_banners_off %}
+                    <li>Отключена реклама на сайте (баннеры)</li>
+                {% endif %}
+                {% if subscribe.ad_player_off %}
+                    <li>Отключена реклама в плеере</li>
+                {% endif %}
+
+                <li>Доступные качества в плеере:
+                    {% if subscribe.available_sd %}SD{% endif %}
+                    {% if subscribe.available_hd %}HD{% endif %}
+                    {% if subscribe.available_fhd %}Full HD{% endif %}
+                </li>
+                {% if subscribe.available_download %}
+                    <li>Разрешено скачивать</li>
+                {% endif %}
+            </ul>
+            <div class="center">
+                <a class="btn" href="{% url 'pay_subscribe' subscribe.title %}">Купить</a>
+                <br><br>
+            </div>
+        </div>
+    {% endfor %}
+    <br>
+    <div class="subscribe" id="select-period">
+        {% if subscribe %}
+            <h3>{{ subscribe.title }}</h3>
+            <h4>Выберете период:</h4>
+            <p>
+                {% for period, price in periods %}
+                    <a href="{% url 'pay_subscribe_link' subscribe.title period %}">{{ period }} месяцев
+                        | {{ price }}₽</a>
+                {% endfor %}
+            </p>
+            <p class="center">
+                {{ msg }}<br><br>
+                {% if link %}
+                    <a class="btn" href="{{ link }}">Оплатить</a>
+                    <br><br>
+                {% endif %}
+            </p>
+        {% endif %}
+    </div>
+
+    <br>
+    <h2>Донат:</h2>
+    <div id="donate-freekassa" class="center">
+        <iframe
+                src="https://widgets.freekassa.ru?type=payment-window&lang=ru&theme=light&default_amount=100
+            &api_key=3404e38b5b5b09b17a28f5045349e323&shopID=23141&currency=USD
+            &o={{ request.user.username }}&em={{ request.user.email }}"
+                width="400" height="600" frameborder="0">
+        </iframe>
+    </div>
+{% endblock %}

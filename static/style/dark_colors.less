@@ -1,0 +1,33 @@
+@text: #f8f8f8;
+@tertiary: #cccccc;
+@primary: #212121;
+@secondary: #151515;
+@hover_color: rgba(204, 204, 204, 0.3);
+
+body {
+  background: @primary;
+  color: @text;
+}
+
+
+a:hover {
+  color: @text;
+}
+
+.topmenu, .dropdown-content {
+  background: @secondary;
+}
+
+
+form input {
+  background: @tertiary;
+}
+
+.pre-post:hover {
+  background: @hover_color;
+  box-shadow: 0 0 10px @hover_color;
+}
+
+.episode-btn {
+  background: @secondary;
+}

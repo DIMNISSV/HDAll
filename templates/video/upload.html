@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <h2>Загрузка видео</h2>
+    <form id="upload_form" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <progress value="50" max="100" id="progress" class="not-visible">Загрузка</progress>
+        <p id="percents"></p>
+        <button type="submit" id="submit">Начать загрузку</button>
+    </form>
+    <script src="{% static 'js/upload.js' %}"></script>
+{% endblock %}

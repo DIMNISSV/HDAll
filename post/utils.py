@@ -1,10 +1,13 @@
 import re
+from pathlib import Path
 from threading import Thread
 
+from PIL import Image
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
-from django.utils.translation import gettext_lazy
 from django.utils.text import slugify
+from django.utils.translation import gettext_lazy
+
 from kodik import utils as kodik_utils
 
 regex = re.compile(r'^(\d{4}|\d{4}-\d{4})$')
@@ -36,3 +39,9 @@ def get_kodik_list(obj):
 
 def get_video_list(obj, model):
     return {i.ep_num: i for i in model.objects.filter(to_post_id=obj.pk)}
+
+
+def convert_img(img, old_path):
+    with open(img.path, 'wb') as f:
+        Image.open(old_path).save(f, format='WEBP', quality=90)
+    Path(old_path).unlink()

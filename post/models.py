@@ -5,7 +5,6 @@ from django.db.models import CASCADE, Q
 from django.urls import reverse_lazy
 
 from Site import settings
-from main import utils as main_utils
 from . import utils
 
 
@@ -92,7 +91,7 @@ class Post(models.Model):
         if self.poster and Path(self.poster.name).suffix != '.webp':
             old_path = self.poster.path
             self.poster.save(Path(self.poster.name).with_suffix('.webp').name, self.poster.file)
-            main_utils.convert_img(self.poster, old_path)
+            utils.convert_img(self.poster, old_path)
         if not self.slug:
             self.slug = utils.gen_slug(self)
         return super().save(*args, **kwargs)

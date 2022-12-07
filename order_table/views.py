@@ -12,7 +12,7 @@ class AddOrder(CreateView, ListView, TitleMixin):
     title = 'Стол заказов'
 
 
-@permission_required('post.add_post')
+@permission_required('post.add_post',)
 def order_complete(request, pk):
     obj = models.Order.objects.get(pk=pk)
     return redirect('kodik_search', title_orig=obj.orig_title, kinopoisk_id=obj.kinopoisk_id,

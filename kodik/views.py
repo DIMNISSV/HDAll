@@ -13,9 +13,12 @@ def search(request, **kwargs):
     kwargs = {k: v for k, v in kwargs.items() if v != 'None'}
     order_pk = kwargs.pop('order_pk')
     obj = utils.search(kwargs)
-    obj.save()
     order_models.Order.objects.get(pk=order_pk).delete()
-    return HttpResponse('Ok')
+    if obj:
+        obj.save()
+        return HttpResponse('Ok')
+    else:
+        return HttpResponse('Not Found')
 
 
 def update(request):

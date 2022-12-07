@@ -29,13 +29,13 @@ class KodikVideo:
                             kwargs={'slug': self.to_post.slug, 'ep_num': self.ep_num, 'translate': self.translate})
 
 
-def _file_from_url(url: str):
+def _file_from_url(url: str) -> ImageFile:
     tmp_file = NamedTemporaryFile()
     tmp_file.write(req.urlopen(url).read())
     tmp_file.flush()
     name = parse.urlparse(url).path.split('/')[-1]
     content = req.urlretrieve(url)
-    return name, ImageFile(FileIO(content[0], 'rb'), name)
+    return ImageFile(FileIO(content[0], 'rb'), name)
 
 
 def _get_field_data(json_data: dict, json_key: str):
@@ -110,7 +110,9 @@ def _get_ids_param(post) -> str:
 def search(kwargs: dict):
     resp: HTTPResponse = req.urlopen(f'{base_url}&with_material_data=true&{urlencode(kwargs)}')
     json_data = json.load(resp)
-    obj = json_to_obj(json_data)
+    obj = None
+    if json_data.get('results'):
+        obj = json_to_obj(json_data)
     return obj
 
 
@@ -132,13 +134,13 @@ def json_to_obj(json_data: dict, base_obj=None):
         base_obj = model_cls.check_exist(**kodik_data)
     for k, v in kodik_data.items():
         if hasattr(base_obj, k) and v:
-            if k == 'poster':
+            if k == 'data':
                 obj = model_cls()
+                data = open(v.file.name, 'rb')
                 if base_obj.poster:
                     base_obj.poster.delete()
                 base_obj.poster = obj.poster
-                base_obj.poster.save(*v, save=False)
-                v[1].close()
+                base_obj.poster.save(v.name, data, save=False)
             else:
                 setattr(base_obj, k, v)
 

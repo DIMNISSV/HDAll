@@ -1,10 +1,11 @@
+from __future__ import annotations
+
 import json
 from http.client import HTTPResponse
 from io import FileIO
 from pprint import pp
-from typing import Iterator
-from urllib import request as req
 from urllib import parse
+from urllib import request as req
 from urllib.parse import urlencode
 
 from django.core.files.images import ImageFile

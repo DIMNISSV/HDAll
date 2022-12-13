@@ -66,7 +66,7 @@ WSGI_APPLICATION = 'Site.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'WatchOnlineDB',
+        'NAME': 'watchonlinedb',
         'USER': 'wo_db',
         'PASSWORD': 'HoJo4556',
         'HOST': '127.0.0.1',

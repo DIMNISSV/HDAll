@@ -44,4 +44,7 @@ def get_video_list(obj, model):
 def convert_img(img, old_path):
     with open(img.path, 'wb') as f:
         Image.open(old_path).save(f, format='WEBP', quality=90)
-    Path(old_path).unlink()
+
+    old_path = Path(old_path)
+    if old_path.exists():
+        old_path.unlink()

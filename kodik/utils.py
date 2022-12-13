@@ -127,15 +127,16 @@ def update(obj):
 def json_to_obj(json_data: dict, base_obj=None):
     imp_path, model_name = settings.KODIK_MODEL.rsplit('.', 1)
     model_cls = getattr(__import__(imp_path, fromlist=model_name), model_name)
+    settings.KODIK_FIELDS.update(
+        dict(zip(settings.KODIK_ONENAME_FIELDS, settings.KODIK_ONENAME_FIELDS)))
     kodik_data = {model_key: _get_field_data(json_data, json_key) for json_key, model_key in
-                  (settings.KODIK_FIELDS
-                   | dict(zip(settings.KODIK_ONENAME_FIELDS, settings.KODIK_ONENAME_FIELDS))).items()}
+                  settings.KODIK_FIELDS.items()}
     print(base_obj)
     if hasattr(model_cls, 'check_exist') and not base_obj:
         base_obj = model_cls.check_exist(**kodik_data)
     for k, v in kodik_data.items():
         if hasattr(base_obj, k) and v:
-            if k == 'data':
+            if k == 'poster':
                 obj = model_cls()
                 data = open(v.file.name, 'rb')
                 if base_obj.poster:

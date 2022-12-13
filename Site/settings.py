@@ -123,7 +123,7 @@ LOGIN_URL = 'login'
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': r'D:\Dima\Документы\PythonProjects\JustDub\Site\cache',
+        'LOCATION': BASE_DIR / r'cache',
     }
 }
 

@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import permission_required
+from django.http import HttpResponse
 from django.views.generic import CreateView, ListView
 
 from kodik import utils as kodik_utils
@@ -19,3 +20,4 @@ def order_complete(request, pk):
     kodik_utils.search(title_orig=obj.orig_title, kinopoisk_id=obj.kinopoisk_id,
                        imdb_id=obj.imdb_id, shikimori_id=obj.shikimori_id, mdl_id=obj.mdl_id,
                        worldart_link=obj.worldart_link, order_pk=pk)
+    return HttpResponse('Ok')

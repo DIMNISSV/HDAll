@@ -71,6 +71,15 @@ DATABASES = {
         'PASSWORD': 'HoJo4556',
         'HOST': '127.0.0.1',
         'PORT': '5432',
+        'MIRROR': 'local'
+    },
+    'default_': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'justwatching',
+        'USER': 'justwatch_user',
+        'PASSWORD': '123',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 
@@ -142,7 +151,8 @@ KODIK_FIELDS = {'title': 'rus_title',
                 'last_season': 'season_total',
                 'last_episode': 'episode',
                 'episodes_count': 'episode_total',
-                'material_data.poster_url': 'poster'
+                'material_data.poster_url': 'poster',
+                'material_data.description': 'description'
                 }
 KODIK_ONENAME_FIELDS = ('year', 'kinopoisk_id', 'imdb_id', 'mdl_id', 'shikimori_id')
 TYPE_TO_CATEGORY = {'': ''}

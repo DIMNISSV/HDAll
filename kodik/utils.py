@@ -119,12 +119,12 @@ def _search(kwargs: dict):
 
 
 def search(**kwargs):
-    kwargs = {k: v for k, v in kwargs.items() if v != 'None'}
+    kwargs = {k: v for k, v in kwargs.items() if v}
     order_pk = kwargs.pop('order_pk')
     obj = _search(kwargs)
-    order_models.Order.objects.get(pk=order_pk).delete()
     if obj:
         obj.save()
+        order_models.Order.objects.get(pk=order_pk).delete()
         return obj
     return
 

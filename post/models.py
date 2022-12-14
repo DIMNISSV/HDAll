@@ -105,12 +105,13 @@ class Post(models.Model):
         return url
 
     @staticmethod
-    def check_exist(title_orig=None, kinopoisk_id=None, imdb_id=None, shikimori_id=None, mdl_id=None,
-                    wa_link=None, **kwargs):
+    def check_exist(**kwargs):
         params = Q()
-        for name, value in {'title': title_orig, 'kinopoisk_id': kinopoisk_id, 'imdb_id': imdb_id,
-                            'shikimori_id': shikimori_id, 'mdl_id': mdl_id, 'wa_link': wa_link}.items():
-            params.add(Q(**{name: value}), params.OR)
+        ids = [(name, kwargs[name]) for name in
+               ('title', 'kinopoisk_id', 'imdb_id', 'shikimori_id', 'mdl_id', 'wa_link') if name in kwargs and
+               kwargs[name]]
+        for name, value in ids:
+            params.add(Q(**{name: value}), params.AND)
         print(params)
         other = Post.objects.filter(params)
         if len(other) > 0:
@@ -119,8 +120,7 @@ class Post(models.Model):
                 if hasattr(obj, k) and getattr(obj, k) != v:
                     setattr(obj, k, v)
             return obj
-        return Post(kinopoisk_id=kinopoisk_id, imdb_id=imdb_id,
-                    shikimori_id=shikimori_id, mdl_id=mdl_id, wa_link=wa_link, **kwargs)
+        return Post(**kwargs)
 
     class Meta:
         verbose_name = 'Пост'

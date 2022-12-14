@@ -30,8 +30,8 @@ def gen_slug(obj, num=0):
 def get_kodik_list(obj):
     cache_name = f'kodik_list_{obj.pk}'
     kodik_list = cache.get(cache_name)
-    Thread(target=kodik_utils.update, args=(obj,)).start()
     if not kodik_list:
+        Thread(target=kodik_utils.update, args=(obj,)).start()
         kodik_list = kodik_utils.get_episode_list(obj)
         cache.set(cache_name, kodik_list)
     return kodik_list

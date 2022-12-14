@@ -13,6 +13,7 @@ from django.core.files.temp import NamedTemporaryFile
 from django.urls import reverse_lazy
 
 from Site import settings
+from order_table import models as order_models
 
 base_url = 'https://kodikapi.com/search?token=a9d0ae164383c3a7cdf19cfceadabb0f'
 
@@ -108,13 +109,24 @@ def _get_ids_param(post) -> str:
     return parse.urlencode({k: v for k, v in ids.items() if v})
 
 
-def search(kwargs: dict):
+def _search(kwargs: dict):
     resp: HTTPResponse = req.urlopen(f'{base_url}&with_material_data=true&{urlencode(kwargs)}')
     json_data = json.load(resp)
     obj = None
     if json_data.get('results'):
         obj = json_to_obj(json_data)
     return obj
+
+
+def search(**kwargs):
+    kwargs = {k: v for k, v in kwargs.items() if v != 'None'}
+    order_pk = kwargs.pop('order_pk')
+    obj = _search(kwargs)
+    order_models.Order.objects.get(pk=order_pk).delete()
+    if obj:
+        obj.save()
+        return obj
+    return
 
 
 def update(obj):

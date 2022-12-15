@@ -1,5 +1,5 @@
 from pathlib import Path
-from secret_params import *
+from .secret_params import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -61,28 +61,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Site.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'watchonlinedb',
-        'USER': 'wo_db',
-        'PASSWORD': 'HoJo4556',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-        'MIRROR': 'local'
-    },
-    'default_': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'justwatching',
-        'USER': 'justwatch_user',
-        'PASSWORD': '123',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-    }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

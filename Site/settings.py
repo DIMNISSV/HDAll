@@ -1,4 +1,5 @@
 from pathlib import Path
+from secret_params import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -137,10 +138,6 @@ CACHES = {
 }
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
-
-FREEKASSA_M = 23141
-FREEKASSA_SECRET = 'gVWh.2$}eDe%i=*'
-FREEKASSA_CURRENCY = 'RUB'
 
 KODIK_MODEL = 'post.models.Post'
 KODIK_FIELDS = {'title': 'rus_title',

@@ -127,3 +127,6 @@ dmypy.json
 
 # inea
 .idea/
+
+# secret params
+Site/secret_params.py

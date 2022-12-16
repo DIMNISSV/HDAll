@@ -11,6 +11,7 @@ class AllView(generic.ListView, TitleMixin):
     template_name = 'post/all.html'
     model = models.Post
     extra_context = {'title': 'Все публикации'}
+    paginate_by = 4
 
 
 class PostDetail(generic.DetailView, TitleMixin):
@@ -29,6 +30,8 @@ class PostDetail(generic.DetailView, TitleMixin):
         context_data['translate'] = translate
         context_data['ep_num'] = self.kwargs.get('ep_num', 1)
         context_data['kodik_translate_list'] = kodik_list.keys()
+        if len(kodik_episode_list) <= 1:
+            context_data['is_movie'] = True
         context_data['kodik_episode_list'] = enumerate(kodik_episode_list, 1)
         context_data['current_video'] = our_list.get(context_data['ep_num'])
         if 0 < context_data['ep_num'] <= len(kodik_episode_list):

@@ -1,0 +1,4 @@
+{% extends 'post/detail.html' %}
+{% block add %}
+    <a href="{% url 'order_complete' order.pk %}?{{ object }}">Добавить</a>
+{% endblock %}

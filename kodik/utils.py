@@ -74,8 +74,12 @@ def _get_season(obj):
 def _get__eps_with_translations(json_data: dict) -> dict[str, tuple]:
     result = dict()
     for item in json_data:
-        first_item = next(iter(item.get('seasons').items()))[1]
-        episode_links = tuple(link + '?translations=false' for link in first_item.get('episodes').values())
+        if item.get('seasons'):
+            first_item = next(iter(item['seasons'].items()))[1]
+            episode_links = tuple(f'{link}?translations=false' for link in first_item.get('episodes').values())
+        else:
+            first_item = item.get('link')
+            episode_links = (f'{first_item}?translations=false',)
         result[item.get('translation').get('title')] = episode_links
     return result
 
@@ -122,6 +126,10 @@ def search(**kwargs):
     kwargs = {k: v for k, v in kwargs.items() if v}
     order_pk = kwargs.pop('order_pk')
     obj = _search(kwargs)
+    return obj
+
+
+def save(obj, order_pk):
     if obj:
         obj.save()
         order_models.Order.objects.get(pk=order_pk).delete()

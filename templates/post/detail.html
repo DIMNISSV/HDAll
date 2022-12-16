@@ -28,10 +28,12 @@
         </div>
         <div class="list">
             {% if kodik_episode_list and translate %}
-                {% for i, video in kodik_episode_list %}
-                    <a class="episode-btn {% if i == ep_num %}active-btn{% endif %}"
-                       href="{% url 'post_ep' object.slug translate i %}">{{ i }} серия</a>
-                {% endfor %}
+                {% if not is_movie %}
+                    {% for i, video in kodik_episode_list %}
+                        <a class="episode-btn {% if i == ep_num %}active-btn{% endif %}"
+                           href="{% url 'post_ep' object.slug translate i %}">{{ i }} серия</a>
+                    {% endfor %}
+                {% endif %}
             {% else %}
                 <p class="episode-btn">Серий не найдено...</p>
             {% endif %}
@@ -43,6 +45,8 @@
                 Нет описания...
             {% endif %}
         </p>
+        {% block add %}
+        {% endblock %}
         <div class="comments">
             {{ comments_form }}
             {{ comments }}

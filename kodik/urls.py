@@ -1,6 +1,6 @@
-from django.urls import path, include
+from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.panel_view, name='kodik_panel')
+    path('', views.PanelView.as_view(), name='kodik_panel')
 ]

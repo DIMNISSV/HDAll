@@ -1,17 +1,14 @@
 from django.contrib.auth.decorators import permission_required
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
+from django.shortcuts import render
 from django.views.generic import CreateView, ListView
 
 from kodik import utils as kodik_utils
-from django.shortcuts import redirect
-from django.views.generic import CreateView, ListView
-from django.contrib.auth.decorators import permission_required
-from main.mixins import TitleMixin
+from main.mixins import BaseMixin
 from . import models
 
 
-class AddOrder(CreateView, ListView, TitleMixin):
+class AddOrder(CreateView, ListView, BaseMixin):
     template_name = 'order_table/add_order.html'
     model = models.Order
     fields = '__all__'

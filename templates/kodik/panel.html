@@ -1,4 +1,4 @@
 {% extends 'base.html' %}
-{% block content %}
-    
+{% block other %}
+    <a href="{% url 'order' %}?back={{ request.path }}">Проверка стола заказов</a>
 {% endblock %}

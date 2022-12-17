@@ -10,18 +10,18 @@ from django.utils.datetime_safe import datetime
 from django.views import generic
 
 from Site import settings
-from main.mixins import TitleMixin
+from main.mixins import BaseMixin
 from . import models, forms
 
 
-class RegistrationView(generic.CreateView, TitleMixin):
+class RegistrationView(generic.CreateView, BaseMixin):
     title = 'Регистрация'
     form_class = forms.RegistrationForm
     success_url = reverse_lazy('login')
     template_name = 'registration/registration.html'
 
 
-class ProfileView(generic.DetailView, TitleMixin):
+class ProfileView(generic.DetailView, BaseMixin):
     model = get_user_model()
     template_name = 'registration/profile.html'
     context_object_name = 'user'
@@ -33,7 +33,7 @@ class ProfileView(generic.DetailView, TitleMixin):
         return get_object_or_404(get_user_model(), username=username)
 
 
-class ProfileEdit(generic.UpdateView, LoginRequiredMixin, TitleMixin):
+class ProfileEdit(generic.UpdateView, LoginRequiredMixin, BaseMixin):
     model = get_user_model()
     template_name = 'registration/edit.html'
     context_object_name = 'user'
@@ -52,7 +52,7 @@ class ProfileEdit(generic.UpdateView, LoginRequiredMixin, TitleMixin):
         return super().post(*args, **kwargs)
 
 
-class SubscribeView(generic.ListView, LoginRequiredMixin, TitleMixin):
+class SubscribeView(generic.ListView, LoginRequiredMixin, BaseMixin):
     model = models.Subscribe
     context_object_name = 'subscribes'
     template_name = 'registration/subscribe.html'

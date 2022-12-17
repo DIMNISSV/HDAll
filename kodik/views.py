@@ -1,8 +1,8 @@
-from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
+from main.mixins import BaseMixin
+from django.views.generic.base import TemplateView
 
 
-
-
-def panel_view(request):
-    return render(request, 'kodik/panel.html', context={})
+class PanelView(TemplateView, BaseMixin):
+    template_name = 'kodik/panel.html'
+    title = 'Панель управления KODIK'

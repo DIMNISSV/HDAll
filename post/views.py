@@ -1,12 +1,12 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views import generic
 
-from main.mixins import TitleMixin
+from main.mixins import BaseMixin
 from video.models import Video
 from . import models, utils
 
 
-class AllView(generic.ListView, TitleMixin):
+class AllView(generic.ListView, BaseMixin):
     title = 'Все публикации'
     template_name = 'post/all.html'
     model = models.Post
@@ -14,7 +14,7 @@ class AllView(generic.ListView, TitleMixin):
     paginate_by = 4
 
 
-class PostDetail(generic.DetailView, TitleMixin):
+class PostDetail(generic.DetailView, BaseMixin):
     template_name = 'post/detail.html'
     model = models.Post
 
@@ -40,7 +40,7 @@ class PostDetail(generic.DetailView, TitleMixin):
         return context_data
 
 
-class PostEditView(PermissionRequiredMixin, generic.UpdateView, TitleMixin):
+class PostEditView(PermissionRequiredMixin, generic.UpdateView, BaseMixin):
     permission_required = 'post.change_post'
     template_name = 'post/edit.html'
     model = models.Post
@@ -52,7 +52,7 @@ class PostEditView(PermissionRequiredMixin, generic.UpdateView, TitleMixin):
         return obj
 
 
-class PostAddView(PermissionRequiredMixin, generic.CreateView, TitleMixin):
+class PostAddView(PermissionRequiredMixin, generic.CreateView, BaseMixin):
     title = 'Добавление публикации'
     permission_required = 'post.add_post'
     template_name = 'post/add.html'

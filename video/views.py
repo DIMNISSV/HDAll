@@ -1,14 +1,14 @@
 from django.views import generic
 from django.contrib.auth import mixins
 
-from main.mixins import TitleMixin
+from main.mixins import BaseMixin
 from . import models
 from .utils import upload_to_cdn
 
 _fields = ('to_post', 'ep_num', 's_num', 'local_file')
 
 
-class UploadView(mixins.PermissionRequiredMixin, generic.CreateView, TitleMixin):
+class UploadView(mixins.PermissionRequiredMixin, generic.CreateView, BaseMixin):
     title = 'Загрузка видео'
     permission_required = 'video.add_video'
 
@@ -17,7 +17,7 @@ class UploadView(mixins.PermissionRequiredMixin, generic.CreateView, TitleMixin)
     template_name = 'video/upload.html'
 
 
-class EditView(mixins.PermissionRequiredMixin, generic.UpdateView, TitleMixin):
+class EditView(mixins.PermissionRequiredMixin, generic.UpdateView, BaseMixin):
     title = 'Изменение видео'
     permission_required = 'video.change_video'
     model = models.Video
@@ -32,6 +32,6 @@ class EditView(mixins.PermissionRequiredMixin, generic.UpdateView, TitleMixin):
         return res
 
 
-class EmbedView(generic.DetailView, TitleMixin):
+class EmbedView(generic.DetailView, BaseMixin):
     model = models.Video
     template_name = 'video/embed.html'

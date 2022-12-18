@@ -15,21 +15,28 @@ class AddOrder(CreateView, ListView, BaseMixin):
     title = 'Стол заказов'
 
 
-def _get_obj(pk):
-    order = models.Order.objects.get(pk=pk)
-    obj = kodik_utils.search(title_orig=order.orig_title, kinopoisk_id=order.kinopoisk_id,
+def _get_obj(pk, order=None):
+    order = order if order else models.Order.objects.get(pk=pk)
+    obj = kodik_utils.search(title_orig=order.title_orig, kinopoisk_id=order.kinopoisk_id,
                              imdb_id=order.imdb_id, shikimori_id=order.shikimori_id, mdl_id=order.mdl_id,
-                             worldart_link=order.worldart_link, order_pk=pk)
+                             worldart_link=order.worldart_link)
+
     return order, obj
 
 
-def order_confirm(request, pk):
-    order, obj = _get_obj(pk)
-    return render(request, 'post/preview.html', {'order': order, 'object': obj})
+def order_confirm(request, pk=None):
+    obj = None
+    if request.GET:
+        obj = models.Order(**request.GET.dict())
+    order, obj = _get_obj(pk, obj)
+    return render(request, 'post/preview.html', {'order': order, 'object': obj, 'params': request.GET.urlencode()})
 
 
 @permission_required('post.add_post')
-def order_complete(request, pk):
-    order, obj = _get_obj(pk)
+def order_complete(request, pk=None):
+    obj = None
+    if request.GET and not pk:
+        obj = models.Order(**request.GET.dict())
+    order, obj = _get_obj(pk, obj)
     post = kodik_utils.save(obj, order.pk)
     return redirect('post_slug', post.slug)

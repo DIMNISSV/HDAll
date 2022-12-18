@@ -2,3 +2,12 @@
 {% block other %}
     <a href="{% url 'order' %}?back={{ request.path }}">Проверка стола заказов</a>
 {% endblock %}
+{% block content %}
+    <h2>Панель управления KODIK</h2>
+    {% for title, url in all %}
+        <div class="order">
+            <h4>{{ title }}</h4>
+            <a class="button" href="{{ url }}">Добавить</a>
+        </div>
+    {% endfor %}
+{% endblock %}

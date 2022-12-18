@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 
 
 class Order(models.Model):
-    orig_title = models.CharField('Оригинальное название', max_length=300)
+    title_orig = models.CharField('Оригинальное название', max_length=300)
     kinopoisk_id = models.CharField('ID KinoPoisk', max_length=32, blank=True, null=True)
     imdb_id = models.CharField('ID IMDB', max_length=32, blank=True, null=True)
     shikimori_id = models.CharField('ID Shikimory', max_length=200, blank=True, null=True)

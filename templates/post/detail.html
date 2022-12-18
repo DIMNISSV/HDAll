@@ -123,10 +123,10 @@
 
         {% if object.kinopoisk_id or object.imdb_id or object.shikimory_id or object.wa_id or object.mdl_id %}
             <p>
-                <a href="https://www.kinopoisk.ru/series/{{ object.kinopoisk_id }}">KinoPoisk</a>,
-                <a href="https://www.imdb.com/title/{{ object.imdb_id }}">IMDB</a>,
-                <a href="{{ object.wa_link }}">World-Art</a>,
-                <a href="https://mydramalist.com/{{ object.mdl_id }}">MyDoramaList</a>,
+                <a href="https://www.kinopoisk.ru/series/{{ object.kinopoisk_id }}">KinoPoisk</a>
+                <a href="https://www.imdb.com/title/{{ object.imdb_id }}">IMDB</a>
+                <a href="{{ object.wa_link }}">World-Art</a>
+                <a href="https://mydramalist.com/{{ object.mdl_id }}">MyDoramaList</a>
                 <a href="https://shikimori.one/animes/{{ object.shikimori_id }}">Shikimory</a>
             </p>
         {% endif %}

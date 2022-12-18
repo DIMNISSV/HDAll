@@ -15,36 +15,26 @@ from django.urls import reverse_lazy
 from Site import settings
 from order_table import models as order_models
 
-base_url = 'https://kodikapi.com/search?token=a9d0ae164383c3a7cdf19cfceadabb0f'
-
-
-class KodikVideo:
-    def __init__(self, post, s_num: int, ep_num: int, translate: str, link: str) -> None:
-        self.to_post = post
-        self.s_num: int = s_num
-        self.ep_num: int = ep_num
-        self.link: str = link
-        self.translate: str = translate
-
-    def get_absolute_url(self):
-        return reverse_lazy('post_ep',
-                            kwargs={'slug': self.to_post.slug, 'ep_num': self.ep_num, 'translate': self.translate})
+search_url = f'https://kodikapi.com/search?token={settings.KODIK_TOKEN}'
+list_url = f'https://kodikapi.com/list?token={settings.KODIK_TOKEN}'
 
 
 def _file_from_url(url: str) -> ImageFile:
     tmp_file = NamedTemporaryFile()
-    tmp_file.write(req.urlopen(url).read())
+    ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'
+    r = req.Request(url, headers={'User-Agent': ua})
+    content = req.urlopen(r).read()
+    tmp_file.write(content)
     tmp_file.flush()
     name = parse.urlparse(url).path.split('/')[-1]
-    content = req.urlretrieve(url)
-    return ImageFile(FileIO(content[0], 'rb'), name)
+    return ImageFile(tmp_file, name)
 
 
 def _get_field_data(json_data: dict, json_key: str):
     value = None
     levels = json_key.split('.')
     json_data = json_data.get('results', json_data)
-    if isinstance(json_data, list) and len(json_data) > 1:
+    if isinstance(json_data, list):
         json_data = json_data[0]
     if len(levels) > 1:
         result = json_data
@@ -93,14 +83,6 @@ def _episodes_json(json_data: dict) -> dict:
     return episodes
 
 
-# def _link_json(json_data: dict, ep_num: int, translate: str = None):
-#     episodes = _episodes_json(json_data, translate)
-#     episode = None
-#     if episodes:
-#         episode = episodes.get(str(ep_num))
-#     return episode
-
-
 def _get_ids_param(post) -> str:
     ids = {
         'kinopoisk_id': post.kinopoisk_id,
@@ -114,7 +96,7 @@ def _get_ids_param(post) -> str:
 
 
 def _search(kwargs: dict):
-    resp: HTTPResponse = req.urlopen(f'{base_url}&with_material_data=true&{urlencode(kwargs)}')
+    resp: HTTPResponse = req.urlopen(f'{search_url}&with_material_data=true&{urlencode(kwargs)}')
     json_data = json.load(resp)
     obj = None
     if json_data.get('results'):
@@ -124,7 +106,6 @@ def _search(kwargs: dict):
 
 def search(**kwargs):
     kwargs = {k: v for k, v in kwargs.items() if v}
-    order_pk = kwargs.pop('order_pk')
     obj = _search(kwargs)
     return obj
 
@@ -132,13 +113,14 @@ def search(**kwargs):
 def save(obj, order_pk):
     if obj:
         obj.save()
-        order_models.Order.objects.get(pk=order_pk).delete()
+        if order_pk:
+            order_models.Order.objects.get(pk=order_pk).delete()
         return obj
     return
 
 
 def update(obj):
-    resp: HTTPResponse = req.urlopen(f'{base_url}&with_material_data=true&{_get_ids_param(obj)}')
+    resp: HTTPResponse = req.urlopen(f'{search_url}&with_material_data=true&{_get_ids_param(obj)}')
     json_data: dict = json.load(resp)
     obj = json_to_obj(json_data, obj)
     obj.save()
@@ -170,8 +152,19 @@ def json_to_obj(json_data: dict, base_obj=None):
 
 
 def get_episode_list(post) -> dict[str, list]:
-    resp: HTTPResponse = req.urlopen(f'{base_url}&{_get_ids_param(post)}&with_episodes=true')
+    resp: HTTPResponse = req.urlopen(f'{search_url}&{_get_ids_param(post)}&with_episodes=true')
     json_data = json.load(resp)
     episodes = _episodes_json(json_data)
     pp(episodes)
     return episodes
+
+
+def full_list():
+    resp: HTTPResponse = req.urlopen(f'{list_url}&limit=5')
+    json_data = json.load(resp)
+    res = []
+    for obj in json_data['results']:
+        id_fields = ('title_orig', 'kinopoisk_id', 'imdb_id', 'mdl_id', 'shikimori_id')
+        obj = {key: value for key, value in obj.items() if key in id_fields}
+        res.append((obj.get('title_orig'), f'{reverse_lazy("order_confirm_params")}?{urlencode(obj)}'))
+    return res

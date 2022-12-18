@@ -10,6 +10,7 @@ from urllib.parse import urlencode
 from django.core.files.images import ImageFile
 from django.core.files.temp import NamedTemporaryFile
 from django.urls import reverse_lazy
+from slugify import slugify
 
 from Site import settings
 from order_table import models as order_models
@@ -49,10 +50,21 @@ def _get_field_data(json_data: dict, json_key: str):
 
     if json_key == 'material_data.poster_url':
         value = _file_from_url(value)
+    elif json_key == 'material_data.all_genres':
+        res = []
+        for title in value:
+            slug = slugify(title, only_ascii=True)
+            i = post_models.Genre.objects.get_or_create(slug=slug)
+            if i[0].title != title:
+                i[0].title = title
+                i[0].save()
+            i = i[0]
+            res.append(i)
+        value = res
     elif json_key == 'type':
         value = post_models.Category.objects.get_or_create(slug=value)
-        if value[1] or not value[0].title:
-            value[0].title = value[0].slug
+        if value[0].title != settings.TYPE_TO_CATEGORY.get(value[0].slug, value[0].slug):
+            value[0].title = settings.TYPE_TO_CATEGORY.get(value[0].slug, value[0].slug)
             value[0].save()
         value = [value[0]]
     elif json_key == 'translation':

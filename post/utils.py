@@ -5,8 +5,8 @@ from threading import Thread
 from PIL import Image
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
-from django.utils.text import slugify
 from django.utils.translation import gettext_lazy
+from slugify import slugify
 
 from kodik import utils as kodik_utils
 
@@ -19,7 +19,7 @@ def validate_year(value):
 
 
 def gen_slug(obj, num=0):
-    slug = slugify(obj.title)
+    slug = slugify(obj.title, only_ascii=True)
     slug = f'{slug}-{num}' if num > 0 else slug
     if obj.__class__.objects.filter(slug=slug).exists():
         num += 1

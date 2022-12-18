@@ -126,18 +126,19 @@ KODIK_FIELDS = {'title': 'rus_title',
                 'last_episode': 'episode',
                 'episodes_count': 'episode_total',
                 'material_data.poster_url': 'poster',
-                'material_data.description': 'description'
+                'material_data.description': 'description',
+                'material_data.all_genres': 'genre'
                 }
 KODIK_ONENAME_FIELDS = ('year', 'kinopoisk_id', 'imdb_id', 'mdl_id', 'shikimori_id')
-TYPE_TO_CATEGORY = {'foreign-movie': 'foreign-movie',
-                    'soviet-cartoon': 'soviet-cartoon',
-                    'foreign-cartoon': 'foreign-cartoon',
-                    'russian-cartoon': 'russian-cartoon',
-                    'anime': 'anime',
-                    'russian-movie': 'russian-movie',
-                    'cartoon-serial': 'cartoon-serial',
-                    'documentary-serial': 'documentary-serial',
-                    'russian-serial': 'russian-serial',
-                    'foreign-serial': 'foreign-serial',
-                    'anime-serial': 'anime-serial',
-                    'multi-part-film': 'multi-part-film'}
+TYPE_TO_CATEGORY = {'foreign-movie': 'Зарубежный фильм',
+                    'soviet-cartoon': 'Советский мультик',
+                    'foreign-cartoon': 'Зарубежный мультик',
+                    'russian-cartoon': 'Русский мультик',
+                    'anime': 'Аниме',
+                    'russian-movie': 'Русский фильм',
+                    'cartoon-serial': 'Мультсериал',
+                    'documentary-serial': 'Документальный сериал',
+                    'russian-serial': 'Русский сериал',
+                    'foreign-serial': 'Зарубежный сериал',
+                    'anime-serial': 'Аниме сериал',
+                    'multi-part-film': 'Многосерийный фильм'}

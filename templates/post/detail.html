@@ -2,7 +2,9 @@
 {% block content %}
     <div class="post">
         <h2>{{ object.rus_title }} {% if request.user.is_staff %}
-            [<a href="{% url 'post_edit' object.pk %}">Изменить</a>]
+            {% if object.pk %}
+                [<a href="{% url 'post_edit' object.pk %}">Изменить</a>]
+            {% endif %}
         {% endif %}</h2>
         <div class="list">
             {% if kodik_translate_list %}
@@ -59,14 +61,14 @@
         {% if object.poster %}
             <img alt="{{ object.title }}" src="{{ object.poster.url }}">
         {% endif %}
-        {% if object.category.count %}
+        {% if object.pk and object.category.count %}
             <p><b>Категории:</b>
                 {% for cat in object.category.all %}
                     <a href="{{ cat.get_absolute_url }}">{{ cat }}</a>
                 {% endfor %}
             </p>
         {% endif %}
-        {% if object.genre.count %}
+        {% if object.pk and object.genre.count %}
             <p><b>Жанры:</b>
                 {% for genre in object.genre.all %}
                     <a href="{{ genre.get_absolute_url }}">{{ genre }}</a>
@@ -99,7 +101,7 @@
                 {{ object.episode_total }}
             </p>
         {% endif %}
-        {% if object.persons.count %}
+        {% if object.pk and object.persons.count %}
             <p><b>Персонал:</b></p>
             <p class="spoiler">
                 {% for person in object.persons.all %}
@@ -107,7 +109,7 @@
                 {% endfor %}
             </p>
         {% endif %}
-        {% if object.dub_workers %}
+        {% if object.pk and object.dub_workers.count %}
             <p><b>Над озвучкой работали:</b>
                 {% for dub_worker in object.dub_workers.all %}
                     <a href="{{ dub_worker.get_absolute_url }}">{{ dub_worker }}</a>

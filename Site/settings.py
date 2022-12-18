@@ -61,7 +61,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Site.wsgi.application'
 
-
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
@@ -121,8 +120,8 @@ KODIK_MODEL = 'post.models.Post'
 KODIK_FIELDS = {'title': 'rus_title',
                 'title_orig': 'title',
                 'worldart_link': 'wa_link',
-                # 'type': 'category',
-                # 'translation': 'dub_workers',
+                'type': 'category',
+                'translation': 'dub_workers',
                 'last_season': 'season_total',
                 'last_episode': 'episode',
                 'episodes_count': 'episode_total',
@@ -130,4 +129,15 @@ KODIK_FIELDS = {'title': 'rus_title',
                 'material_data.description': 'description'
                 }
 KODIK_ONENAME_FIELDS = ('year', 'kinopoisk_id', 'imdb_id', 'mdl_id', 'shikimori_id')
-TYPE_TO_CATEGORY = {'': ''}
+TYPE_TO_CATEGORY = {'foreign-movie': 'foreign-movie',
+                    'soviet-cartoon': 'soviet-cartoon',
+                    'foreign-cartoon': 'foreign-cartoon',
+                    'russian-cartoon': 'russian-cartoon',
+                    'anime': 'anime',
+                    'russian-movie': 'russian-movie',
+                    'cartoon-serial': 'cartoon-serial',
+                    'documentary-serial': 'documentary-serial',
+                    'russian-serial': 'russian-serial',
+                    'foreign-serial': 'foreign-serial',
+                    'anime-serial': 'anime-serial',
+                    'multi-part-film': 'multi-part-film'}

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 from http.client import HTTPResponse
-from io import FileIO
 from pprint import pp
 from urllib import parse
 from urllib import request as req
@@ -14,6 +13,7 @@ from django.urls import reverse_lazy
 
 from Site import settings
 from order_table import models as order_models
+from post import models as post_models
 
 search_url = f'https://kodikapi.com/search?token={settings.KODIK_TOKEN}'
 list_url = f'https://kodikapi.com/list?token={settings.KODIK_TOKEN}'
@@ -43,11 +43,20 @@ def _get_field_data(json_data: dict, json_key: str):
             if not result:
                 break
         value = result
+        if not value: return
     elif not value:
         value = json_data.get(json_key, None)
-    print(json_key)
+
     if json_key == 'material_data.poster_url':
         value = _file_from_url(value)
+    elif json_key == 'type':
+        value = post_models.Category.objects.get_or_create(slug=value)
+        if value[1] or not value[0].title:
+            value[0].title = value[0].slug
+            value[0].save()
+        value = [value[0]]
+    elif json_key == 'translation':
+        pass
 
     return value
 
@@ -78,7 +87,6 @@ def _episodes_json(json_data: dict) -> dict:
     data = json_data['results']
     episodes = dict()
     if data:
-        pp(data[0])
         episodes: dict = _get__eps_with_translations(data)
     return episodes
 
@@ -145,6 +153,11 @@ def json_to_obj(json_data: dict, base_obj=None):
                     base_obj.poster.delete()
                 base_obj.poster = obj.poster
                 base_obj.poster.save(v.name, data, save=False)
+            elif k in ('category', 'genre', 'persons', 'dub_workers'):
+                getattr(base_obj, k).clear()
+                for i in v:
+                    if hasattr(i, 'pk'):
+                        getattr(base_obj, k).add(i.pk)
             else:
                 setattr(base_obj, k, v)
 

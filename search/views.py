@@ -1,11 +1,14 @@
 from django.db.models import Q
 from django.views.generic import ListView, FormView
+
+from main.mixins import BaseMixin
 from . import forms
 
 from post import models
 
 
-class SearchView(FormView, ListView):
+class SearchView(FormView, ListView, BaseMixin):
+    title = 'Поиск'
     model = models.Post
     template_name = 'search/advanced.html'
     form_class = forms.SearchForm

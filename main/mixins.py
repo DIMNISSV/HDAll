@@ -1,4 +1,6 @@
+from django.utils.datetime_safe import datetime
 from django.views.generic.base import ContextMixin
+from account import models as account_models
 
 
 class BaseMixin(ContextMixin):
@@ -8,5 +10,12 @@ class BaseMixin(ContextMixin):
         context = super().get_context_data(**kwargs)
         if self.title:
             context["page_title"] = self.title
+
         context['back_url'] = self.request.GET.get('back')
+
+        if not self.request.user.is_anonymous and not (
+                self.request.user.subscribe or self.request.user.subscribe_to
+                or self.request.user.subscribe_to < datetime.now()):
+            self.request.user.subscribe = account_models.Subscribe.objects.get_or_create(price=0)[0]
+            self.request.user.save()
         return context

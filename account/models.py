@@ -2,6 +2,10 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models import SET_NULL
 from django.urls import reverse_lazy
+from django.utils import timezone
+from django.utils.datetime_safe import datetime
+
+from account import utils
 from post import models as post
 from Site import settings
 
@@ -41,7 +45,7 @@ class User(AbstractUser):
     subscribe_to = models.DateTimeField('Подписка до', blank=True, null=True)
 
     birth_date = models.DateField('Дата рождения', null=True, blank=True)
-    dark_theme = models.BooleanField('Темная тема', default=False)
+    dark_theme = models.BooleanField('Темная тема', default=True)
     favorite_posts = models.ManyToManyField(post.Post, blank=True)
     favorite_categories = models.ManyToManyField(post.Category, blank=True)
     favorite_genres = models.ManyToManyField(post.Genre, blank=True)
@@ -53,3 +57,11 @@ class User(AbstractUser):
 
     def get_absolute_url(self):
         return reverse_lazy('profile', kwargs={'username': self.username})
+
+    def save(self, *args, **kwargs):
+        now = datetime.now(tz=timezone.utc)
+        if not self.subscribe_to or self.subscribe_to < now:
+            c_m, c_y = utils.get_month(now.month, now.year, 1)
+            new = now.replace(c_y, c_m)
+            self.subscribe_to = new
+        return super().save(*args, **kwargs)

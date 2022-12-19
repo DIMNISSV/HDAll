@@ -11,7 +11,7 @@ from django.views import generic
 
 from Site import settings
 from main.mixins import BaseMixin
-from . import models, forms
+from . import models, forms, utils
 
 
 class RegistrationView(generic.CreateView, BaseMixin):
@@ -109,13 +109,8 @@ def subscribe_complete_view(request):
         c_y = user.subscribe_to.year
         c_m = user.subscribe_to.month
         c_d = user.subscribe_to.day
-    need_m = (c_m + m) % 12
-    if c_m + m > 12:
-        c_y += 1
-    if need_m == 0:
-        c_y += 1
-        need_m = 1
-    user.subscribe_to = datetime(c_y, need_m, c_d, user.subscribe_to.hour,
+    c_m, c_y = utils.get_month(c_m, c_y, m)
+    user.subscribe_to = datetime(c_y, c_m, c_d, user.subscribe_to.hour,
                                  user.subscribe_to.minute, tzinfo=timezone.utc)
     user.save()
     return redirect('main_page')

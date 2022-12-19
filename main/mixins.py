@@ -16,6 +16,10 @@ class BaseMixin(ContextMixin):
         if not self.request.user.is_anonymous and not (
                 self.request.user.subscribe or self.request.user.subscribe_to
                 or (self.request.user.subscribe_to and self.request.user.subscribe_to < datetime.now())):
-            self.request.user.subscribe = account_models.Subscribe.objects.get_or_create(price=0)[0]
+            subscribe = account_models.Subscribe.objects.get_or_create(price=0)
+            if subscribe[1]:
+                subscribe.title = 'Бесплатная'
+                subscribe.save()
+            self.request.user.subscribe = subscribe[0]
             self.request.user.save()
         return context

@@ -1,20 +1,10 @@
 from pathlib import Path
 from .secret_params import *
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-sor2$3lxo+zm!ant0=l5!@%a4z(f*4ie%5cmxeqev-vrq63q&1'
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 ALLOWED_HOSTS = ['localhost', 'wathing.online', '127.0.0.1']
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -62,9 +52,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Site.wsgi.application'
 
-# Password validation
-# https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -80,34 +67,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
-# https://docs.djangoproject.com/en/4.1/topics/i18n/
-
-LANGUAGE_CODE = 'ru-ru'
-
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_TZ = True
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.1/howto/static-files/
-
-STATIC_URL = 'static/'
-STATICFILES_DIRS = ['static']
-MEDIA_URL = 'media/'
-MEDIA_ROOT = BASE_DIR / 'media/'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-LOGOUT_REDIRECT_URL = 'login'
-AUTH_USER_MODEL = 'account.User'
-LOGIN_REDIRECT_URL = 'my_profile'
-LOGIN_URL = 'login'
-
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
@@ -115,6 +74,21 @@ CACHES = {
     }
 }
 
+LANGUAGE_CODE = 'ru-ru'
+TIME_ZONE = 'UTC'
+USE_I18N = True
+USE_TZ = True
+
+STATIC_URL = 'static/'
+STATICFILES_DIRS = ['static']
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media/'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+LOGOUT_REDIRECT_URL = 'login'
+AUTH_USER_MODEL = 'account.User'
+LOGIN_REDIRECT_URL = 'my_profile'
+LOGIN_URL = 'login'
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 KODIK_MODEL = 'post.models.Post'

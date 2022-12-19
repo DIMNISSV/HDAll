@@ -33,10 +33,12 @@ def _file_from_url(url: str) -> ImageFile:
 
 def _get_field_data(json_data: dict, json_key: str):
     value = None
+
     levels = json_key.split('.')
     json_data = json_data.get('results', json_data)
     if isinstance(json_data, list):
         json_data = json_data[0]
+
     if len(levels) > 1:
         result = json_data
         for level in levels:
@@ -50,25 +52,6 @@ def _get_field_data(json_data: dict, json_key: str):
 
     if json_key == 'material_data.poster_url':
         value = _file_from_url(value)
-    elif json_key == 'material_data.all_genres':
-        res = []
-        for title in value:
-            slug = slugify(title, only_ascii=True)
-            i = post_models.Genre.objects.get_or_create(slug=slug)
-            if i[0].title != title:
-                i[0].title = title
-                i[0].save()
-            i = i[0]
-            res.append(i)
-        value = res
-    elif json_key == 'type':
-        value = post_models.Category.objects.get_or_create(slug=value)
-        if value[0].title != settings.TYPE_TO_CATEGORY.get(value[0].slug, value[0].slug):
-            value[0].title = settings.TYPE_TO_CATEGORY.get(value[0].slug, value[0].slug)
-            value[0].save()
-        value = [value[0]]
-    elif json_key == 'translation':
-        pass
 
     return value
 
@@ -103,16 +86,18 @@ def _episodes_json(json_data: dict) -> dict:
     return episodes
 
 
-def _get_ids_param(post) -> str:
-    ids = {
-        'kinopoisk_id': post.kinopoisk_id,
-        'imdb_id': post.imdb_id,
-        'shikimori_id': post.shikimori_id,
-        'wa_link': post.wa_link,
-        'mdl_id': post.mdl_id,
-        'title': post.title
-    }
-    return parse.urlencode({k: v for k, v in ids.items() if v})
+def _get_ids_param(post, as_url=True, from_dict=False) -> str | dict:
+    if from_dict:
+        ids = [(name, post[name]) for name in
+               settings.KODIK_ID_FIELDS if name in post and
+               post[name]]
+    else:
+        ids = dict(((i, getattr(post, i)) for i in settings.KODIK_ID_FIELDS))
+
+    if as_url:
+        return parse.urlencode({k: v for k, v in ids.items() if v})
+    else:
+        return ids
 
 
 def _search(kwargs: dict):
@@ -122,6 +107,50 @@ def _search(kwargs: dict):
     if json_data.get('results'):
         obj = json_to_obj(json_data)
     return obj
+
+
+def _set_m2m_fields(obj, field, data):
+    res = []
+    data = (data.get('title', ()),) if isinstance(data, dict) else data if isinstance(data, (list, tuple)) else (data,)
+    m2m = getattr(obj, field)
+
+    for title in data:
+        slug, title = (title, settings.TYPE_TO_CATEGORY.get(title)) if title in settings.TYPE_TO_CATEGORY \
+            else (slugify(title, only_ascii=True), title)
+        if hasattr(m2m.model, 'slug'):
+            i = m2m.model.objects.get_or_create(slug=slug)[0]
+        else:
+            i = m2m.model.objects.filter(title=title)
+            args = {'title': title}
+            args.update({'job': 'team'} if hasattr(m2m.model, 'job') else {})
+            i = i[0] if i else m2m.model.objects.create(**args)
+        if i.title != title:
+            i.title = title
+            i.save()
+        res.append(i)
+        post_models.Post()
+
+    m2m.clear()
+    m2m.add(*res)
+
+    return obj
+
+
+def _validate_fields_data(base_obj, kodik_data, model_cls):
+    for k, v in kodik_data.items():
+        if k and hasattr(base_obj, k) and v:
+            if k == 'poster':
+                obj = model_cls()
+                data = open(v.file.name, 'rb')
+                if base_obj.poster:
+                    base_obj.poster.delete()
+                base_obj.poster = obj.poster
+                base_obj.poster.save(v.name, data, save=False)
+            elif k in settings.KODIK_M2M_FIELDS and base_obj.pk:
+                _set_m2m_fields(base_obj, k, v)
+            else:
+                setattr(base_obj, k, v)
+    return base_obj
 
 
 def search(**kwargs):
@@ -149,29 +178,16 @@ def update(obj):
 def json_to_obj(json_data: dict, base_obj=None):
     imp_path, model_name = settings.KODIK_MODEL.rsplit('.', 1)
     model_cls = getattr(__import__(imp_path, fromlist=model_name), model_name)
+
     settings.KODIK_FIELDS.update(
         dict(zip(settings.KODIK_ONENAME_FIELDS, settings.KODIK_ONENAME_FIELDS)))
     kodik_data = {model_key: _get_field_data(json_data, json_key) for json_key, model_key in
                   settings.KODIK_FIELDS.items()}
-    print(base_obj)
+
     if hasattr(model_cls, 'check_exist') and not base_obj:
         base_obj = model_cls.check_exist(**kodik_data)
-    for k, v in kodik_data.items():
-        if hasattr(base_obj, k) and v:
-            if k == 'poster':
-                obj = model_cls()
-                data = open(v.file.name, 'rb')
-                if base_obj.poster:
-                    base_obj.poster.delete()
-                base_obj.poster = obj.poster
-                base_obj.poster.save(v.name, data, save=False)
-            elif k in ('category', 'genre', 'persons', 'dub_workers'):
-                getattr(base_obj, k).clear()
-                for i in v:
-                    if hasattr(i, 'pk'):
-                        getattr(base_obj, k).add(i.pk)
-            else:
-                setattr(base_obj, k, v)
+
+    base_obj = _validate_fields_data(base_obj, kodik_data, model_cls)
 
     return base_obj
 

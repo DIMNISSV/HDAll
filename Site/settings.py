@@ -1,5 +1,4 @@
 from pathlib import Path
-from .secret_params import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -142,3 +141,5 @@ TYPE_TO_CATEGORY = {'foreign-movie': 'Зарубежный фильм',
                     'foreign-serial': 'Зарубежный сериал',
                     'anime-serial': 'Аниме сериал',
                     'multi-part-film': 'Многосерийный фильм'}
+KODIK_M2M_FIELDS = ('category', 'genre', 'persons', 'dub_workers')
+KODIK_ID_FIELDS = ('title', 'kinopoisk_id', 'imdb_id', 'shikimori_id', 'mdl_id', 'wa_link')

@@ -130,3 +130,5 @@ dmypy.json
 
 # secret params
 Site/secret_params.py
+/cache/
+/media/posters/

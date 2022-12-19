@@ -50,14 +50,14 @@ class Person(models.Model):
 
 
 class DubWorker(models.Model):
-    _jobs = (('dubber', 'даббер'), ('sounder', 'технарь'), ('translator', 'переводчик'))
-    nickname = models.CharField('Никнэйм', max_length=100)
-    page = models.URLField('Ссылка на личную страницу', blank=True, null=True)
-    job = models.CharField('Должность', max_length=10, choices=_jobs)
+    _jobs = (('dubber', 'даббер'), ('sounder', 'технарь'), ('translator', 'переводчик'), ('team', 'команда'))
+    title = models.CharField('Имя', max_length=100)
+    page = models.URLField('Ссылка на страницу', blank=True, null=True)
+    job = models.CharField('Тип', max_length=10, choices=_jobs)
     description = models.TextField('Описание', max_length=400, blank=True, null=True)
 
     def __str__(self):
-        return self.nickname
+        return self.title
 
     class Meta:
         verbose_name = 'Работающий над озвучками'
@@ -108,19 +108,28 @@ class Post(models.Model):
     def check_exist(**kwargs):
         params = Q()
         ids = [(name, kwargs[name]) for name in
-               ('title', 'kinopoisk_id', 'imdb_id', 'shikimori_id', 'mdl_id', 'wa_link') if name in kwargs and
+               settings.KODIK_ID_FIELDS if name in kwargs and
                kwargs[name]]
         for name, value in ids:
             params.add(Q(**{name: value}), params.AND)
-        print(params)
+
         other = Post.objects.filter(params)
         if len(other) > 0:
             obj = other[0]
             for k, v in kwargs.items():
                 if hasattr(obj, k) and getattr(obj, k) != v:
+                    if k in settings.KODIK_M2M_FIELDS:
+                        getattr(obj, k).clear()
+                        for i in v:
+                            if hasattr(i, 'pk'):
+                                getattr(obj, k).add(i.pk)
                     setattr(obj, k, v)
             return obj
-        return Post(**kwargs)
+        obj = Post()
+        for k, v in kwargs.items():
+            if k not in settings.KODIK_M2M_FIELDS:
+                setattr(obj, k, v)
+        return obj
 
     class Meta:
         verbose_name = 'Пост'

@@ -1,6 +1,8 @@
 from pathlib import Path
+from .secret_params import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
@@ -11,7 +13,7 @@ SECRET_KEY = 'django-insecure-sor2$3lxo+zm!ant0=l5!@%a4z(f*4ie%5cmxeqev-vrq63q&1
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', 'wathing.online', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [

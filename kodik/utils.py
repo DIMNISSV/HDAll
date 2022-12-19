@@ -88,9 +88,8 @@ def _episodes_json(json_data: dict) -> dict:
 
 def _get_ids_param(post, as_url=True, from_dict=False) -> str | dict:
     if from_dict:
-        ids = [(name, post[name]) for name in
-               settings.KODIK_ID_FIELDS if name in post and
-               post[name]]
+        ids = dict((name, post[name]) for name in settings.KODIK_ID_FIELDS
+                   if name in post and post[name])
     else:
         ids = dict(((i, getattr(post, i)) for i in settings.KODIK_ID_FIELDS))
 
@@ -129,8 +128,6 @@ def _set_m2m_fields(obj, field, data):
             i.save()
         res.append(i)
         post_models.Post()
-
-    m2m.clear()
     m2m.add(*res)
 
     return obj
@@ -138,7 +135,10 @@ def _set_m2m_fields(obj, field, data):
 
 def _validate_fields_data(base_obj, kodik_data, model_cls):
     for k, v in kodik_data.items():
-        if k and hasattr(base_obj, k) and v:
+        if k in settings.KODIK_M2M_FIELDS:
+            if base_obj.pk:
+                _set_m2m_fields(base_obj, k, v)
+        elif k and hasattr(base_obj, k) and v:
             if k == 'poster':
                 obj = model_cls()
                 data = open(v.file.name, 'rb')
@@ -146,8 +146,6 @@ def _validate_fields_data(base_obj, kodik_data, model_cls):
                     base_obj.poster.delete()
                 base_obj.poster = obj.poster
                 base_obj.poster.save(v.name, data, save=False)
-            elif k in settings.KODIK_M2M_FIELDS and base_obj.pk:
-                _set_m2m_fields(base_obj, k, v)
             else:
                 setattr(base_obj, k, v)
     return base_obj
@@ -184,8 +182,8 @@ def json_to_obj(json_data: dict, base_obj=None):
     kodik_data = {model_key: _get_field_data(json_data, json_key) for json_key, model_key in
                   settings.KODIK_FIELDS.items()}
 
-    if hasattr(model_cls, 'check_exist') and not base_obj:
-        base_obj = model_cls.check_exist(**kodik_data)
+    if not base_obj:
+        base_obj = model_cls.objects.get_or_create(**_get_ids_param(kodik_data, False, True))[0]
 
     base_obj = _validate_fields_data(base_obj, kodik_data, model_cls)
 
@@ -196,7 +194,9 @@ def get_episode_list(post) -> dict[str, list]:
     resp: HTTPResponse = req.urlopen(f'{search_url}&{_get_ids_param(post)}&with_episodes=true')
     json_data = json.load(resp)
     episodes = _episodes_json(json_data)
-    pp(episodes)
+    for translate in episodes.keys():
+        _set_m2m_fields(post, 'dub_workers', translate)
+
     return episodes
 
 
@@ -205,7 +205,6 @@ def full_list():
     json_data = json.load(resp)
     res = []
     for obj in json_data['results']:
-        id_fields = ('title_orig', 'kinopoisk_id', 'imdb_id', 'mdl_id', 'shikimori_id')
-        obj = {key: value for key, value in obj.items() if key in id_fields}
+        obj = {key: value for key, value in obj.items() if key in settings.KODIK_ID_FIELDS}
         res.append((obj.get('title_orig'), f'{reverse_lazy("order_confirm_params")}?{urlencode(obj)}'))
     return res

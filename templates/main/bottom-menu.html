@@ -1,0 +1,13 @@
+<a href="{% url 'all_post' %}">Все публикации</a>
+<a href="{% url 'order' %}">Стол заказов</a>
+{% if request.user.is_staff %}
+    <div class="dropdown">
+        <a href="/admin/" target="_blank" class="dropdown-btn">Администрирование
+            <div class="dropdown-content">
+                <a href="{% url 'post_add' %}">Добавить публикацию</a>
+                <a href="{% url 'upload_video' %}">Добавить видео</a>
+                <a href="{% url 'kodik_panel' %}">Управление KODIK</a>
+            </div>
+        </a>
+    </div>
+{% endif %}

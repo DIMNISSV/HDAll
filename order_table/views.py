@@ -1,4 +1,8 @@
+from math import inf
+
 from django.contrib.auth.decorators import permission_required
+from django.core.cache import cache
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.views.generic import CreateView, ListView
@@ -34,9 +38,13 @@ def order_confirm(request, pk=None):
 
 @permission_required('post.add_post')
 def order_complete(request, pk=None):
+    GET = request.GET.dict()
+    no_redirect = GET.pop('no_redirect', None)
     obj = None
-    if request.GET and not pk:
-        obj = models.Order(**request.GET.dict())
+    if GET and not pk:
+        obj = models.Order(**GET)
     order, obj = _get_obj(pk, obj)
     post = kodik_utils.save(obj, order.pk)
+    if no_redirect:
+        return HttpResponse('')
     return redirect('post_slug', post.slug)

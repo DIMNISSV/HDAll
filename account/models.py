@@ -46,6 +46,8 @@ class User(AbstractUser):
 
     birth_date = models.DateField('Дата рождения', null=True, blank=True)
     dark_theme = models.BooleanField('Темная тема', default=True)
+    page_size = models.IntegerField('Кол-во публикаций на странице', default=12)
+
     favorite_posts = models.ManyToManyField(post.Post, blank=True)
     favorite_categories = models.ManyToManyField(post.Category, blank=True)
     favorite_genres = models.ManyToManyField(post.Genre, blank=True)

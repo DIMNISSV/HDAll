@@ -3,6 +3,14 @@ from django.views.generic.base import ContextMixin
 from account import models as account_models
 
 
+class UserParamsMixin:
+    def get_paginate_by(self, *args):
+        paginate_by = super().get_paginate_by(*args)
+        paginate_by = paginate_by if paginate_by else self.request.user.page_size \
+            if self.request.user.is_authenticated else 12
+        return paginate_by
+
+
 class BaseMixin(ContextMixin):
     title = 'JustWatch'
 

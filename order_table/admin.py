@@ -4,5 +4,5 @@ from . import models
 
 
 @admin.register(models.Order)
-class SubscribeAdmin(admin.ModelAdmin):
+class OrderAdmin(admin.ModelAdmin):
     pass

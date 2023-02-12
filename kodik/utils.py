@@ -1,20 +1,20 @@
 from __future__ import annotations
 
 import json
-from http.client import HTTPResponse
-from pprint import pp
+from http.client import HTTPResponse, HTTPException
 from urllib import parse
 from urllib import request as req
+from urllib.error import HTTPError
 from urllib.parse import urlencode
 
 from django.core.files.images import ImageFile
 from django.core.files.temp import NamedTemporaryFile
-from django.urls import reverse_lazy
 from slugify import slugify
 
 from Site import settings
 from order_table import models as order_models
 from post import models as post_models
+from . import models
 
 search_url = f'https://kodikapi.com/search?token={settings.KODIK_TOKEN}'
 list_url = f'https://kodikapi.com/list?token={settings.KODIK_TOKEN}'
@@ -151,6 +151,31 @@ def _validate_fields_data(base_obj, kodik_data, model_cls):
     return base_obj
 
 
+def _get_list_result():
+    parsed = models.Parsed.objects.get_or_create(pk=0)
+    default_url = f'{list_url}&limit=10&order=asc'
+    if parsed[1] or not parsed[0].page:
+        parsed[0].page = default_url
+    parsed = parsed[0]
+    url = parsed.page if not parsed.all_have else parsed.next_page if parsed.next_page else parsed.page
+    try:
+        resp: HTTPResponse = req.urlopen(url)
+    except HTTPError:
+        resp = req.urlopen(default_url)
+    json_data = json.load(resp)
+    update_parsed = False
+    if parsed.all_have:
+        parsed.page = parsed.next_page
+        parsed.all_have = False
+        update_parsed = True
+    if parsed.next_page != json_data.get('next_page'):
+        parsed.next_page = json_data.get('next_page')
+        update_parsed = True
+    if update_parsed:
+        parsed.save()
+    return json_data
+
+
 def search(**kwargs):
     kwargs = {k: v for k, v in kwargs.items() if v}
     obj = _search(kwargs)
@@ -183,8 +208,12 @@ def json_to_obj(json_data: dict, base_obj=None):
                   settings.KODIK_FIELDS.items()}
 
     if not base_obj:
-        base_obj = model_cls.objects.get_or_create(**_get_ids_param(kodik_data, False, True))[0]
-
+        params = _get_ids_param(kodik_data, False, True)
+        base_obj = model_cls.objects.filter(**params)
+        if base_obj:
+            base_obj = base_obj[0]
+        else:
+            base_obj = model_cls(**params)
     base_obj = _validate_fields_data(base_obj, kodik_data, model_cls)
 
     return base_obj
@@ -201,10 +230,21 @@ def get_episode_list(post) -> dict[str, list]:
 
 
 def full_list():
-    resp: HTTPResponse = req.urlopen(f'{list_url}&limit=5')
-    json_data = json.load(resp)
+    json_data = _get_list_result()
+
     res = []
     for obj in json_data['results']:
         obj = {key: value for key, value in obj.items() if key in settings.KODIK_ID_FIELDS}
-        res.append((obj.get('title_orig'), f'{reverse_lazy("order_confirm_params")}?{urlencode(obj)}'))
+        if len(obj) > 1 and 'title_orig' in obj:
+            params = obj.copy()
+            params.pop('title_orig')
+        else:
+            params = obj
+        if not post_models.Post.objects.filter(**params):
+            res.append((obj.get('title_orig'), urlencode(obj)))
+    if not res:
+        parsed = models.Parsed.objects.get(pk=0)
+        parsed.all_have = True
+        parsed.save()
+        return full_list()
     return res

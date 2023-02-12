@@ -13,23 +13,22 @@
     {% endif %}
     <script src="{% static 'js/less.js' %}" type="text/javascript"></script>
     <script src="{% static 'js/jquery.min.js' %}"></script>
-    <script src="{% static 'js/libs.js' %}"></script>
 </head>
 <body>
 
 {% include 'main/topmenu.html' %}<br>
 <div class="main-block">
-    <div class="left-block">
-        {% block content %}
-        {% endblock %}
-    </div>
-    <div class="right-block menu">
+    {% block content %}
+    {% endblock %}
+    <div class="bottom-menu">
         {% block other %}{% endblock %}
-        {% if back_url %}
-            <a href="{{ back_url }}"><< Назад</a>
-        {% endif %}
-        <a href="#">Сайт находится на стадии разработки. Некоторый функционал может не работать</a>
+        {% include 'main/bottom-menu.html' %}
+
     </div>
+    <p>Сайт находится на стадии разработки. Некоторый функционал может не работать</p>
 </div>
+
+<script src="{% static 'js/libs.js' %}"></script>
+
 </body>
 </html>

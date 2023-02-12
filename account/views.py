@@ -37,7 +37,7 @@ class ProfileEdit(generic.UpdateView, LoginRequiredMixin, BaseMixin):
     model = get_user_model()
     template_name = 'registration/edit.html'
     context_object_name = 'user'
-    fields = ['username', 'email', 'first_name', 'last_name', 'birth_date', 'dark_theme']
+    fields = ['username', 'email', 'first_name', 'last_name', 'birth_date', 'dark_theme', 'page_size']
 
     def get_pk(self):
         self.title = f'Редактирование пользователя {self.request.user.username}'

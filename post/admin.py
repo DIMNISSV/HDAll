@@ -24,7 +24,7 @@ class DubWorkerAdmin(admin.ModelAdmin):
 
 @admin.register(models.Post)
 class PostAdmin(admin.ModelAdmin):
-    prepopulated_fields = {'slug': ('title',)}
+    prepopulated_fields = {'slug': ('title_orig',)}
 
 
 @admin.register(models.Comment)

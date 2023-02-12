@@ -1,17 +1,18 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 from django.views import generic
 
-from main.mixins import BaseMixin
+from main.mixins import BaseMixin, UserParamsMixin
 from video.models import Video
 from . import models, utils
 
 
-class AllView(generic.ListView, BaseMixin):
+class AllView(UserParamsMixin, generic.ListView, BaseMixin):
     title = 'Все публикации'
     template_name = 'post/all.html'
     model = models.Post
     extra_context = {'title': 'Все публикации'}
-    paginate_by = 4
 
 
 class PostDetail(generic.DetailView, BaseMixin):
@@ -36,7 +37,7 @@ class PostDetail(generic.DetailView, BaseMixin):
         context_data['current_video'] = our_list.get(context_data['ep_num'])
         if 0 < context_data['ep_num'] <= len(kodik_episode_list):
             context_data['kodik_video'] = kodik_episode_list[context_data['ep_num'] - 1]
-
+        context_data['player'] = 'kodik'
         return context_data
 
 
@@ -58,3 +59,17 @@ class PostAddView(PermissionRequiredMixin, generic.CreateView, BaseMixin):
     template_name = 'post/add.html'
     model = models.Post
     fields = '__all__'
+
+
+@login_required
+def vote_view(request, pk):
+    obj = models.Post.objects.get(pk=pk)
+    voted = models.Vote.objects.filter(user=request.user)
+    rating = int(request.GET.get('rating', 0))
+    if obj:
+        if voted:
+            voted[0].value = rating
+        else:
+            voted = models.Vote(user=request.user, post=obj, value=rating)
+        voted[0].save()
+    return redirect(request.headers.get('referer', 'main_page'))

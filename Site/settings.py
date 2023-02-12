@@ -4,7 +4,7 @@ from .secret_params import *
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 DEBUG = True
-ALLOWED_HOSTS = ['localhost', 'wathing.online', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'hdall.ru', 'hdall.store']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -93,7 +93,7 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 KODIK_MODEL = 'post.models.Post'
 KODIK_FIELDS = {'title': 'rus_title',
-                'title_orig': 'title',
+                'title_orig': 'title_orig',
                 'worldart_link': 'wa_link',
                 'type': 'category',
                 'translation': 'dub_workers',
@@ -117,5 +117,5 @@ TYPE_TO_CATEGORY = {'foreign-movie': 'Зарубежный фильм',
                     'foreign-serial': 'Зарубежный сериал',
                     'anime-serial': 'Аниме сериал',
                     'multi-part-film': 'Многосерийный фильм'}
-KODIK_M2M_FIELDS = ('category', 'genre', 'persons', 'dub_workers')
-KODIK_ID_FIELDS = ('title', 'kinopoisk_id', 'imdb_id', 'shikimori_id', 'mdl_id', 'wa_link')
+KODIK_M2M_FIELDS = {'category', 'genre', 'persons', 'dub_workers'}
+KODIK_ID_FIELDS = {'title_orig', 'kinopoisk_id', 'imdb_id', 'shikimori_id', 'mdl_id', 'wa_link'}

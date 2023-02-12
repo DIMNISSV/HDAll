@@ -1,9 +1,13 @@
+@import "not-mobile";
+
 @img_height: 200px * 1.5vh;
 @img_width: 200px * 1vw;
 
+// SHARE
+
 body {
   margin: 0;
-  min-width: 430px;
+  min-width: 440px;
 }
 
 a, a:active {
@@ -40,6 +44,16 @@ h3, h4, h6 {
     overflow: auto;
   }
 }
+
+.subtitle {
+  color: gray;
+}
+
+.relative {
+  position: relative !important;
+}
+
+// FORMS
 
 .btn {
   background-color: #ffa400;
@@ -83,63 +97,10 @@ form {
   }
 }
 
+// SUBSCRIBE
+
 #percents {
   float: right;
-}
-
-.main-block {
-  margin: 1%;
-  height: 100%;
-  display: block;
-}
-
-
-.left-block {
-  .full-width();
-}
-
-.right-block {
-  width: 98%;
-}
-
-.topmenu {
-  .full-width();
-  display: inline-block;
-  vertical-align: center;
-  text-align: center;
-
-  a, .right-menu {
-    margin: 15px 1%;
-  }
-
-  .dropdown {
-    position: relative;
-    display: inline-block;
-  }
-
-  .dropdown-content {
-    display: none;
-    position: absolute;
-    z-index: 1;
-    padding: 1%;
-    a {
-      display: block;
-      margin: 10% 0;
-    }
-  }
-
-  .dropdown:hover .dropdown-content {
-    display: block;
-  }
-
-}
-
-.menu {
-  a {
-    .full-width();
-    display: inline-block;
-    margin: 1%;
-  }
 }
 
 .subscribe {
@@ -177,6 +138,77 @@ form {
   height: max-content;
 }
 
+// MAIN
+
+.main-block {
+  margin: 1%;
+  height: 100%;
+  display: block;
+}
+
+.topmenu {
+  position: fixed;
+  backdrop-filter: blur(15px);
+  z-index: 9;
+}
+
+.topmenu, .bottom-menu {
+  .full-width();
+  display: inline-block;
+  vertical-align: center;
+  text-align: center;
+
+  .dropdown {
+    position: relative;
+    display: inline-block;
+    border-radius: 5px 5px 0 0;
+  }
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    z-index: 10;
+    padding: 5%;
+    border-radius: 0 10px 10px;
+
+    a {
+      margin: 1% 0;
+      width: max-content;
+    }
+  }
+
+  a {
+    display: inline-block;
+    margin: 1%;
+  }
+
+  .dropdown:hover {
+    box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.5);
+  }
+
+  .dropdown-content {
+    box-shadow: 0 5px 5px 2px rgba(0, 0, 0, 0.5);
+  }
+
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+
+  .ico {
+    height: 15px;
+  }
+}
+
+.menu {
+  a {
+    .full-width();
+    display: inline-block;
+    margin: 1%;
+  }
+}
+
+// POST
+
 .pre-post {
   height: @img_height;
   width: @img_width;
@@ -201,64 +233,53 @@ form {
   }
 }
 
-.post {
+.vote-input {
+  width: 3%;
+}
 
+.post {
+}
+
+.start-watch {
+  margin: 1% 0;
 }
 
 .post-info {
+  min-height: @img_height;
+
   img {
-    width: 80%;
-    margin: 0 10%;
+    margin-right: 1%;
+    float: left;
+    width: @img_width;
+  }
+
+  p {
+    font-size: 75%;
+    margin: 0.2%;
   }
 }
 
-#player-box {
-  text-align: center;
-
-  video, iframe {
-    width: 90%;
-    height: 500px;
-  }
-}
+// POST PLAYER
 
 .list {
+  margin: 0 0;
+
   .episode-btn {
-    width: 15%;
     padding: 0.5%;
     margin: 0.5% 0;
     display: inline-block;
-  }
-
-  margin: 0 0;
-}
-
-@media only screen and (min-width: 960px) {
-  .main-block {
-    display: flex;
-    align-items: normal;
-  }
-
-  .left-block {
-    display: inline-block;
-    width: 79.5%;
-  }
-
-  .right-block {
-    display: inline-block;
-    width: 19.5%;
-    margin-left: 1%;
-  }
-
-  .topmenu {
-    .logo {
-      float: left !important;
-    }
-
-    .menu {
-      width: 85%;
-      text-align: right !important;
-      float: right;
-    }
+    overflow: hidden;
+    min-width: 30%;
   }
 }
 
+// PLAYER
+
+#player-box {
+  .center();
+
+  video, iframe {
+    width: 80%;
+    height: 500px;
+  }
+}

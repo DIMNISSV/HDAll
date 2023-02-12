@@ -10,8 +10,9 @@ class Video(models.Model):
     to_post = models.ForeignKey(post_models.Post, models.CASCADE, 'video_to_post', verbose_name='Пост')
     ep_num = models.PositiveSmallIntegerField('Номер серии', default=1)
     s_num = models.PositiveSmallIntegerField('Номер сезона', default=1)
-    bunny_id = models.CharField('ID на BunnyCDN', max_length=100)
+    file_url = models.CharField('URL видео', max_length=100)
     local_file = models.FileField('Локальный файл', upload_to='tmp_videos', null=True, blank=True)
+    translate = models.CharField('Перевод', max_length=100, null=True, default='Неизвестный')
     upload_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)
 

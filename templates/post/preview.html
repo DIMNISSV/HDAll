@@ -1,8 +1,8 @@
 {% extends 'post/detail.html' %}
 {% block add %}
-    <a href="{% if not object %}
-    {% url 'order_complete' order.pk %}
-    {% else %}
+    <a href="{% if not order.pk %}
     {% url 'order_complete_params' %}?{{ params }}
+    {% else %}
+    {% url 'order_complete' order.pk %}
     {% endif %}">Добавить</a>
 {% endblock %}

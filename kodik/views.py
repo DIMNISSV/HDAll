@@ -1,5 +1,3 @@
-from pprint import pp
-
 from django.views.generic.base import TemplateView
 
 from main.mixins import BaseMixin

@@ -1,13 +1,13 @@
 from django.db.models import Q
 from django.views.generic import ListView, FormView
 
-from main.mixins import BaseMixin
+from main.mixins import BaseMixin, UserParamsMixin
 from . import forms
 
 from post import models
 
 
-class SearchView(FormView, ListView, BaseMixin):
+class SearchView(FormView, UserParamsMixin, ListView, BaseMixin):
     title = 'Поиск'
     model = models.Post
     template_name = 'search/advanced.html'
@@ -26,7 +26,7 @@ class SearchView(FormView, ListView, BaseMixin):
             con = params.get('default_condition', query.AND)
             if params.get('title'):
                 query.add(
-                    Q(title__icontains=params['title'])
+                    Q(title_orig__icontains=params['title'])
                     | Q(rus_title__icontains=params['title'])
                     | Q(lat_title__icontains=params['title']),
                     con)

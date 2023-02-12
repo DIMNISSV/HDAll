@@ -1,13 +1,19 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block other %}
     <a href="{% url 'order' %}?back={{ request.path }}">Проверка стола заказов</a>
 {% endblock %}
 {% block content %}
     <h2>Панель управления KODIK</h2>
+    <a id="add_all">Добавить все сразу</a>
     {% for title, url in all %}
         <div class="order">
             <h4>{{ title }}</h4>
-            <a class="button" href="{{ url }}">Добавить</a>
+            <a class="button" href="{% url 'order_confirm_params' %}?{{ url }}">Предпросмотр</a>
+            <a class="button add" target="_blank" href="{% url 'order_complete_params' %}?{{ url }}">Добавить</a>
         </div>
     {% endfor %}
+    <div id="previews"></div>
+    <script src="{% static 'js/kodik_add_all.js' %}"></script>
+
 {% endblock %}

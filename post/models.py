@@ -65,11 +65,11 @@ class DubWorker(models.Model):
 
 
 class Post(models.Model):
-    title = models.CharField('Оригинальное название', max_length=200)
+    title_orig = models.CharField('Оригинальное название', max_length=200)
     slug = models.SlugField('Ссылка', max_length=200, unique=True)
     rus_title = models.CharField('Название на русском', max_length=200, blank=True, null=True)
     lat_title = models.CharField('Оригинальное название на латинице', max_length=200, blank=True, null=True)
-    description = models.TextField('Описание', max_length=600, blank=True, null=True)
+    description = models.TextField('Описание', max_length=1200, blank=True, null=True)
     poster = models.ImageField('Постер', upload_to='posters', blank=True, null=True)
     category = models.ManyToManyField(Category, verbose_name='Категория', blank=True)
     genre = models.ManyToManyField(Genre, verbose_name='Жанр', blank=True)
@@ -86,6 +86,10 @@ class Post(models.Model):
     episode = models.PositiveSmallIntegerField('Вышло серий', blank=True, null=True)
     persons = models.ManyToManyField(Person, verbose_name='Люди работающие над этим', blank=True)
     dub_workers = models.ManyToManyField(DubWorker, verbose_name='Люди работающие над озвучкой', blank=True)
+    updated_at = models.DateTimeField('Последнее обновление', auto_now=True)
+
+    def __str__(self):
+        return self.title_orig
 
     def save(self, *args, **kwargs):
         if self.poster and Path(self.poster.name).suffix != '.webp':
@@ -96,13 +100,14 @@ class Post(models.Model):
             self.slug = utils.gen_slug(self)
         return super().save(*args, **kwargs)
 
-    def __str__(self):
-        return self.title
-
     def get_absolute_url(self):
         url = reverse_lazy('post_slug', kwargs={'slug': self.slug}) if self.slug \
             else reverse_lazy('post_pk', kwargs={'pk': self.pk})
         return url
+
+    def get_rating(self):
+        to_this = Vote.objects.filter(post=self)
+        return sum(*to_this.values_list('value'), ) / (to_this.count() or 1)
 
     @staticmethod
     def check_exist(**kwargs):
@@ -134,6 +139,13 @@ class Post(models.Model):
     class Meta:
         verbose_name = 'Пост'
         verbose_name_plural = 'Посты'
+        ordering = ('-updated_at',)
+
+
+class Vote(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, models.CASCADE)
+    post = models.ForeignKey(Post, models.CASCADE)
+    value = models.FloatField()
 
 
 class Comment(models.Model):

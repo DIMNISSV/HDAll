@@ -19,7 +19,7 @@ def validate_year(value):
 
 
 def gen_slug(obj, num=0):
-    slug = slugify(obj.title, only_ascii=True)
+    slug = slugify(obj.title_orig, only_ascii=True)
     slug = f'{slug}-{num}' if num > 0 else slug
     if obj.__class__.objects.filter(slug=slug).exists():
         num += 1

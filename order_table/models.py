@@ -11,6 +11,13 @@ class Order(models.Model):
     mdl_id = models.CharField('ID MyDoramaList', max_length=200, blank=True, null=True)
     comment = models.TextField('Комментарий для модератора', blank=True, null=True)
 
+    def __str__(self):
+        return self.title_orig
+
     @staticmethod
     def get_absolute_url():
         return reverse_lazy('order')
+
+    class Meta:
+        verbose_name = 'Заказ'
+        verbose_name_plural = 'Заказы'

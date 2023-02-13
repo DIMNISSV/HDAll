@@ -29,7 +29,7 @@ class PostDetail(generic.DetailView, BaseMixin):
         translate = self.kwargs.get('translate', list(kodik_list.keys())[0])
         kodik_episode_list = sorted(kodik_list.get(translate))
         context_data['translate'] = translate
-        context_data['ep_num'] = self.kwargs.get('ep_num', 1)
+        context_data['ep_num'] = int(self.kwargs.get('ep_num', 1))
         context_data['kodik_translate_list'] = kodik_list.keys()
         if len(kodik_episode_list) <= 1:
             context_data['is_movie'] = True

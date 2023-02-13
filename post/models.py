@@ -107,7 +107,7 @@ class Post(models.Model):
 
     def get_rating(self):
         to_this = Vote.objects.filter(post=self)
-        return sum(*to_this.values_list('value'), ) / (to_this.count() or 1)
+        return sum((*to_this.values_list('value'), 0)) / (to_this.count() or 1)
 
     @staticmethod
     def check_exist(**kwargs):

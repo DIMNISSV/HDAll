@@ -5,7 +5,6 @@ from http.client import HTTPResponse, HTTPException
 from urllib import parse
 from urllib import request as req
 from urllib.error import HTTPError
-from urllib.parse import urlencode
 
 from django.core.files.images import ImageFile
 from django.core.files.temp import NamedTemporaryFile
@@ -100,7 +99,7 @@ def _get_ids_param(post, as_url=True, from_dict=False) -> str | dict:
 
 
 def _search(kwargs: dict):
-    resp: HTTPResponse = req.urlopen(f'{search_url}&with_material_data=true&{urlencode(kwargs)}')
+    resp: HTTPResponse = req.urlopen(f'{search_url}&with_material_data=true&{parse.urlencode(kwargs)}')
     json_data = json.load(resp)
     obj = None
     if json_data.get('results'):
@@ -241,7 +240,7 @@ def full_list():
         else:
             params = obj
         if not post_models.Post.objects.filter(**params):
-            res.append((obj.get('title_orig'), urlencode(obj)))
+            res.append((obj.get('title_orig'), parse.urlencode(obj)))
     if not res:
         parsed = models.Parsed.objects.get(pk=0)
         parsed.all_have = True
